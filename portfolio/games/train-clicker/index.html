@@ -1,0 +1,622 @@
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🚂 Train Clicker</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1b2a;
+      color: #f0f0f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      background: #E2001A;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; }
+    header span { font-size: 0.85rem; opacity: 0.85; }
+
+    .game {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* === GAUCHE : Stats + Clicker === */
+    .left-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      background: radial-gradient(ellipse at center, #1a2e44 0%, #0d1b2a 100%);
+    }
+
+    .stats {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .stats .billets {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #ffd700;
+      text-shadow: 0 0 20px rgba(255,215,0,0.5);
+    }
+    .stats .per-sec {
+      font-size: 1rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+    .stats .total {
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .click-zone {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+    }
+    .train-btn {
+      font-size: 8rem;
+      transition: transform 0.1s;
+      filter: drop-shadow(0 0 20px rgba(226,0,26,0.6));
+      display: block;
+      line-height: 1;
+    }
+    .click-zone:active .train-btn {
+      transform: scale(0.88);
+    }
+    .click-zone:hover .train-btn {
+      filter: drop-shadow(0 0 30px rgba(226,0,26,0.9));
+    }
+
+    .click-power {
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: #aaa;
+      text-align: center;
+    }
+
+    /* Floating numbers */
+    .float-num {
+      position: absolute;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #ffd700;
+      pointer-events: none;
+      animation: floatUp 1s ease-out forwards;
+      text-shadow: 0 0 8px rgba(255,215,0,0.8);
+      z-index: 100;
+    }
+    @keyframes floatUp {
+      0%   { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-80px) scale(0.7); }
+    }
+
+    /* Rail animation en bas */
+    .rail-anim {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      overflow: hidden;
+      height: 24px;
+    }
+    .rail-track {
+      display: flex;
+      animation: railScroll 1s linear infinite;
+      width: 200%;
+    }
+    .rail-track span {
+      display: inline-block;
+      width: 40px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    @keyframes railScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* === DROITE : Upgrades === */
+    .right-panel {
+      width: 340px;
+      background: #111d2b;
+      border-left: 1px solid #1e3a52;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .right-panel h2 {
+      padding: 14px 18px;
+      font-size: 1rem;
+      background: #162030;
+      border-bottom: 1px solid #1e3a52;
+      color: #ccc;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .upgrades-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .upgrades-list::-webkit-scrollbar { width: 6px; }
+    .upgrades-list::-webkit-scrollbar-track { background: #0d1b2a; }
+    .upgrades-list::-webkit-scrollbar-thumb { background: #1e3a52; border-radius: 3px; }
+
+    .upgrade-card {
+      background: #162030;
+      border: 1px solid #1e3a52;
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .upgrade-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: var(--accent, #E2001A);
+      border-radius: 4px 0 0 4px;
+    }
+    .upgrade-card.affordable {
+      border-color: #E2001A;
+      box-shadow: 0 0 12px rgba(226,0,26,0.3);
+    }
+    .upgrade-card.affordable:hover {
+      background: #1e2f42;
+      transform: translateX(3px);
+    }
+    .upgrade-card.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .upgrade-card .icon { font-size: 2rem; min-width: 40px; text-align: center; }
+    .upgrade-card .info { flex: 1; }
+    .upgrade-card .info .name { font-size: 0.95rem; font-weight: 600; color: #eee; }
+    .upgrade-card .info .desc { font-size: 0.78rem; color: #7a9ab5; margin-top: 2px; }
+    .upgrade-card .info .owned { font-size: 0.78rem; color: #aaa; margin-top: 3px; }
+    .upgrade-card .price {
+      text-align: right;
+      min-width: 70px;
+    }
+    .upgrade-card .price .amount {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #ffd700;
+    }
+    .upgrade-card .price .label {
+      font-size: 0.7rem;
+      color: #888;
+    }
+    .upgrade-card .price .bps {
+      font-size: 0.75rem;
+      color: #5cb8ff;
+      margin-top: 2px;
+    }
+
+    /* Milestones */
+    .milestone {
+      padding: 10px 14px;
+      border-top: 1px solid #1e3a52;
+    }
+    .milestone h3 { font-size: 0.85rem; color: #7a9ab5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .milestone-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: #1a2e44;
+      color: #7a9ab5;
+      border: 1px solid #1e3a52;
+      transition: all 0.3s;
+    }
+    .badge.unlocked {
+      background: #2a1f00;
+      color: #ffd700;
+      border-color: #ffd700;
+      text-shadow: 0 0 6px rgba(255,215,0,0.5);
+    }
+
+    /* Notification toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #E2001A;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 20px rgba(226,0,26,0.6);
+      transition: transform 0.4s ease;
+      z-index: 200;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🚂 Train Clicker</h1>
+  <span>Collecte des billets, développe ton réseau ferroviaire !</span>
+</header>
+
+<div class="game">
+
+  <!-- Panneau gauche -->
+  <div class="left-panel" id="leftPanel">
+    <div class="stats">
+      <div class="billets" id="billetsDisplay">0 🎫</div>
+      <div class="per-sec" id="perSecDisplay">0 billets / sec</div>
+      <div class="total" id="totalDisplay">Total cliqué : 0</div>
+    </div>
+
+    <div class="click-zone" id="clickZone">
+      <span class="train-btn" id="trainBtn">🚂</span>
+    </div>
+    <div class="click-power" id="clickPowerDisplay">+1 billet par clic</div>
+
+    <div class="rail-anim">
+      <div class="rail-track" id="railTrack"></div>
+    </div>
+  </div>
+
+  <!-- Panneau droit -->
+  <div class="right-panel">
+    <h2>🛠 Améliorations</h2>
+    <div class="upgrades-list" id="upgradesList"></div>
+
+    <div class="milestone">
+      <h3>🏆 Succès</h3>
+      <div class="milestone-list" id="milestoneList"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ============================================================
+  // ÉTAT DU JEU
+  // ============================================================
+  const state = {
+    billets: 0,
+    totalBillets: 0,
+    totalClicked: 0,
+    clickPower: 1,
+    billetsPerSec: 0,
+  };
+
+  // ============================================================
+  // DÉFINITION DES UPGRADES
+  // ============================================================
+  const upgrades = [
+    {
+      id: 'click1', type: 'click',
+      icon: '🎟️', name: 'Composteur Premium',
+      desc: 'Chaque clic vaut +1 billet',
+      baseCost: 10, costMult: 1.8,
+      clickBonus: 1, bps: 0,
+      owned: 0, accent: '#ffd700'
+    },
+    {
+      id: 'click2', type: 'click',
+      icon: '🪙', name: 'Billet Or',
+      desc: 'Chaque clic vaut +5 billets',
+      baseCost: 150, costMult: 2.0,
+      clickBonus: 5, bps: 0,
+      owned: 0, accent: '#ffd700'
+    },
+    {
+      id: 'click3', type: 'click',
+      icon: '⚡', name: 'Clic Turbo',
+      desc: 'Chaque clic vaut +25 billets',
+      baseCost: 3000, costMult: 2.2,
+      clickBonus: 25, bps: 0,
+      owned: 0, accent: '#ffd700'
+    },
+    {
+      id: 'controleur', type: 'auto',
+      icon: '🕵️', name: 'Contrôleur',
+      desc: 'Poinçonne les billets automatiquement',
+      baseCost: 15, costMult: 1.15,
+      clickBonus: 0, bps: 0.5,
+      owned: 0, accent: '#5cb8ff'
+    },
+    {
+      id: 'guichetier', type: 'auto',
+      icon: '🧑‍💼', name: 'Guichetier',
+      desc: 'Vend des billets en continu',
+      baseCost: 100, costMult: 1.15,
+      clickBonus: 0, bps: 3,
+      owned: 0, accent: '#5cb8ff'
+    },
+    {
+      id: 'distributeur', type: 'auto',
+      icon: '🏧', name: 'Distributeur auto',
+      desc: 'Émet des billets sans relâche',
+      baseCost: 600, costMult: 1.15,
+      clickBonus: 0, bps: 12,
+      owned: 0, accent: '#5cb8ff'
+    },
+    {
+      id: 'ter', type: 'auto',
+      icon: '🚃', name: 'Rame TER',
+      desc: 'Transport régional en service',
+      baseCost: 3500, costMult: 1.15,
+      clickBonus: 0, bps: 50,
+      owned: 0, accent: '#4ddc72'
+    },
+    {
+      id: 'intercites', type: 'auto',
+      icon: '🚄', name: 'Intercités',
+      desc: 'Relie les grandes villes',
+      baseCost: 20000, costMult: 1.15,
+      clickBonus: 0, bps: 200,
+      owned: 0, accent: '#4ddc72'
+    },
+    {
+      id: 'tgv', type: 'auto',
+      icon: '🚅', name: 'TGV',
+      desc: 'Grande vitesse, gros revenus',
+      baseCost: 120000, costMult: 1.15,
+      clickBonus: 0, bps: 1000,
+      owned: 0, accent: '#E2001A'
+    },
+    {
+      id: 'eurostar', type: 'auto',
+      icon: '🌍', name: 'Eurostar',
+      desc: 'Traverse les frontières',
+      baseCost: 800000, costMult: 1.15,
+      clickBonus: 0, bps: 6000,
+      owned: 0, accent: '#E2001A'
+    },
+    {
+      id: 'maglev', type: 'auto',
+      icon: '🛸', name: 'Train Maglev',
+      desc: 'Lévitation magnétique, aucune friction',
+      baseCost: 6000000, costMult: 1.15,
+      clickBonus: 0, bps: 40000,
+      owned: 0, accent: '#c27aff'
+    },
+  ];
+
+  // ============================================================
+  // SUCCÈS
+  // ============================================================
+  const milestones = [
+    { id: 'm1',  label: '🎫 1er billet',      condition: s => s.totalBillets >= 1 },
+    { id: 'm2',  label: '💰 100 billets',      condition: s => s.totalBillets >= 100 },
+    { id: 'm3',  label: '🚃 TER acheté',       condition: () => getUpgrade('ter').owned >= 1 },
+    { id: 'm4',  label: '🚅 TGV acheté',       condition: () => getUpgrade('tgv').owned >= 1 },
+    { id: 'm5',  label: '🔢 10k billets',      condition: s => s.totalBillets >= 10000 },
+    { id: 'm6',  label: '⚡ 10 clics/sec',     condition: s => s.billetsPerSec >= 10 },
+    { id: 'm7',  label: '🏭 Réseau complet',   condition: () => upgrades.filter(u => u.type==='auto').every(u => u.owned >= 1) },
+    { id: 'm8',  label: '🌍 1M billets',       condition: s => s.totalBillets >= 1000000 },
+    { id: 'm9',  label: '🛸 Maglev acheté',    condition: () => getUpgrade('maglev').owned >= 1 },
+    { id: 'm10', label: '💎 100M billets',     condition: s => s.totalBillets >= 100000000 },
+  ];
+  const unlockedMilestones = new Set();
+
+  function getUpgrade(id) { return upgrades.find(u => u.id === id); }
+
+  // ============================================================
+  // CALCULS
+  // ============================================================
+  function getCurrentCost(upg) {
+    return Math.floor(upg.baseCost * Math.pow(upg.costMult, upg.owned));
+  }
+
+  function recalcStats() {
+    state.billetsPerSec = upgrades.reduce((s, u) => s + u.bps * u.owned, 0);
+    state.clickPower = 1 + upgrades.reduce((s, u) => s + u.clickBonus * u.owned, 0);
+  }
+
+  // ============================================================
+  // FORMATAGE
+  // ============================================================
+  function fmt(n) {
+    if (n >= 1e12) return (n / 1e12).toFixed(2) + ' T';
+    if (n >= 1e9)  return (n / 1e9).toFixed(2) + ' G';
+    if (n >= 1e6)  return (n / 1e6).toFixed(2) + ' M';
+    if (n >= 1e3)  return (n / 1e3).toFixed(1) + ' k';
+    return Math.floor(n).toString();
+  }
+
+  // ============================================================
+  // INTERFACE : UPGRADES
+  // ============================================================
+  function renderUpgrades() {
+    const list = document.getElementById('upgradesList');
+    list.innerHTML = '';
+    upgrades.forEach(upg => {
+      const cost = getCurrentCost(upg);
+      const canAfford = state.billets >= cost;
+      const card = document.createElement('div');
+      card.className = 'upgrade-card' + (canAfford ? ' affordable' : ' disabled');
+      card.style.setProperty('--accent', upg.accent);
+
+      const bpsText = upg.bps > 0
+        ? `<div class="bps">+${upg.bps} billets/sec</div>`
+        : `<div class="bps">+${upg.clickBonus} par clic</div>`;
+
+      card.innerHTML = `
+        <div class="icon">${upg.icon}</div>
+        <div class="info">
+          <div class="name">${upg.name}</div>
+          <div class="desc">${upg.desc}</div>
+          <div class="owned">Possédé : ${upg.owned}</div>
+        </div>
+        <div class="price">
+          <div class="amount">${fmt(cost)}</div>
+          <div class="label">billets</div>
+          ${bpsText}
+        </div>
+      `;
+
+      if (canAfford) {
+        card.addEventListener('click', () => buyUpgrade(upg));
+      }
+      list.appendChild(card);
+    });
+  }
+
+  function buyUpgrade(upg) {
+    const cost = getCurrentCost(upg);
+    if (state.billets < cost) return;
+    state.billets -= cost;
+    upg.owned++;
+    recalcStats();
+    showToast(`${upg.icon} ${upg.name} acheté ! (×${upg.owned})`);
+    updateDisplay();
+    renderUpgrades();
+    checkMilestones();
+  }
+
+  // ============================================================
+  // INTERFACE : DISPLAY
+  // ============================================================
+  function updateDisplay() {
+    document.getElementById('billetsDisplay').textContent = fmt(state.billets) + ' 🎫';
+    document.getElementById('perSecDisplay').textContent = fmt(state.billetsPerSec) + ' billets / sec';
+    document.getElementById('totalDisplay').textContent = 'Total cliqué : ' + fmt(state.totalClicked);
+    document.getElementById('clickPowerDisplay').textContent = '+' + fmt(state.clickPower) + ' billet' + (state.clickPower > 1 ? 's' : '') + ' par clic';
+  }
+
+  // ============================================================
+  // CLIC
+  // ============================================================
+  document.getElementById('clickZone').addEventListener('click', function(e) {
+    state.billets += state.clickPower;
+    state.totalBillets += state.clickPower;
+    state.totalClicked++;
+    spawnFloat(e, '+' + fmt(state.clickPower));
+    updateDisplay();
+    renderUpgrades();
+    checkMilestones();
+  });
+
+  function spawnFloat(e, text) {
+    const zone = document.getElementById('leftPanel');
+    const rect = zone.getBoundingClientRect();
+    const el = document.createElement('div');
+    el.className = 'float-num';
+    el.textContent = text;
+    const x = e.clientX - rect.left + (Math.random() * 40 - 20);
+    const y = e.clientY - rect.top;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    zone.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+  }
+
+  // ============================================================
+  // BOUCLE AUTO-CLICKER
+  // ============================================================
+  let lastTime = performance.now();
+  function gameLoop(now) {
+    const dt = (now - lastTime) / 1000;
+    lastTime = now;
+    const earned = state.billetsPerSec * dt;
+    state.billets += earned;
+    state.totalBillets += earned;
+    updateDisplay();
+    renderUpgrades();
+    checkMilestones();
+    requestAnimationFrame(gameLoop);
+  }
+  requestAnimationFrame(gameLoop);
+
+  // ============================================================
+  // RAIL ANIMATION
+  // ============================================================
+  const railTrack = document.getElementById('railTrack');
+  const railEmojis = ['🛤️','🛤️','🛤️','⚡','🛤️','🛤️','🚦','🛤️'];
+  for (let i = 0; i < 2; i++) {
+    railEmojis.forEach(e => {
+      const s = document.createElement('span');
+      s.textContent = e;
+      railTrack.appendChild(s);
+    });
+  }
+
+  // ============================================================
+  // TOAST
+  // ============================================================
+  let toastTimeout;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ============================================================
+  // MILESTONES
+  // ============================================================
+  function checkMilestones() {
+    milestones.forEach(m => {
+      if (!unlockedMilestones.has(m.id) && m.condition(state)) {
+        unlockedMilestones.add(m.id);
+        renderMilestones();
+        showToast('🏆 Succès débloqué : ' + m.label);
+      }
+    });
+  }
+
+  function renderMilestones() {
+    const list = document.getElementById('milestoneList');
+    list.innerHTML = '';
+    milestones.forEach(m => {
+      const b = document.createElement('div');
+      b.className = 'badge' + (unlockedMilestones.has(m.id) ? ' unlocked' : '');
+      b.textContent = m.label;
+      list.appendChild(b);
+    });
+  }
+
+  // ============================================================
+  // INIT
+  // ============================================================
+  recalcStats();
+  updateDisplay();
+  renderUpgrades();
+  renderMilestones();
+</script>
+</body>
+</html>
+```
