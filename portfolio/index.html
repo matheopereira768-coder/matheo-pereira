@@ -1,16 +1,3 @@
-# 🌐 Portfolio v2 — Mathéo PEREIRA
-
-> **Nouveautés v2 :** Loader · Dark/Light mode · Scroll progress bar · Favicon · À propos · Compétences par onglets · Filtres projets · Section Jeux · Typewriter · Compteurs · Burger menu · Scroll-to-top
->
-> **Structure fichiers à uploader :**
-> ```
-> /portfolio/
-> ├── index.html   ← ce fichier
-> ├── cv.pdf
-> └── games/train-clicker/index.html   ← ton jeu
-> ```
-
----
 
 ```html
 <!DOCTYPE html>
@@ -21,7 +8,6 @@
   <title>Portfolio — Mathéo PEREIRA</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23e2001a'/><text x='50' y='68' font-size='48' font-family='Segoe UI,sans-serif' font-weight='800' fill='white' text-anchor='middle'>MP</text></svg>">
   <style>
-    /* ── VARIABLES ── */
     :root { --red:#e2001a; --red-h:#c0001a; --glow:rgba(226,0,26,0.3); }
     [data-theme="dark"]  { --bg:#1a1a2e; --card:#16213e; --nav:rgba(26,26,46,0.96); --navy:#0f3460; --tx:#cdd6f4; --muted:#8892b0; --faint:#6e7f9b; --w:#fff; --bd:rgba(255,255,255,0.06); }
     [data-theme="light"] { --bg:#f0f2f8; --card:#fff; --nav:rgba(240,242,248,0.96); --navy:#e8eaf6; --tx:#2d3561; --muted:#5a6585; --faint:#8890aa; --w:#1a1a2e; --bd:rgba(0,0,0,0.09); }
@@ -29,7 +15,7 @@
     html{scroll-behavior:smooth;}
     body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6;transition:background .4s,color .4s;}
 
-    /* ── LOADER ── */
+    /* LOADER */
     #loader{position:fixed;inset:0;background:#1a1a2e;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .7s,visibility .7s;}
     #loader.hidden{opacity:0;visibility:hidden;}
     .ld-logo{width:80px;height:80px;background:var(--red);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:800;color:#fff;letter-spacing:1px;animation:ldpulse 1.2s ease-in-out infinite;margin-bottom:1.5rem;}
@@ -39,10 +25,10 @@
     @keyframes ldfill{0%{width:0}100%{width:100%}}
     .ld-txt{color:rgba(255,255,255,.35);font-size:.75rem;letter-spacing:3px;text-transform:uppercase;}
 
-    /* ── SCROLL BAR ── */
+    /* SCROLL BAR */
     #spb{position:fixed;top:0;left:0;height:3px;width:0%;background:var(--red);z-index:2001;box-shadow:0 0 8px var(--glow);transition:width .1s linear;}
 
-    /* ── NAV ── */
+    /* NAV */
     nav{position:fixed;top:3px;width:100%;background:var(--nav);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:.85rem 2rem;display:flex;justify-content:space-between;align-items:center;z-index:1000;border-bottom:2px solid var(--red);transition:background .4s;}
     .logo{font-size:1.4rem;font-weight:800;color:var(--w);text-decoration:none;letter-spacing:1px;}
     .logo span{color:var(--red);}
@@ -62,11 +48,11 @@
     .mob-menu a{color:var(--tx);text-decoration:none;font-weight:600;font-size:1rem;padding:.4rem 0;border-bottom:1px solid var(--bd);transition:color .3s;}
     .mob-menu a:hover{color:var(--red);}
 
-    /* ── BANNER ── */
+    /* BANNER */
     .banner{margin-top:66px;background:linear-gradient(90deg,var(--red) 0%,transparent 100%);padding:.65rem 2rem;text-align:center;font-size:.9rem;font-weight:600;color:#fff;}
     .banner em{font-weight:400;opacity:.9;}
 
-    /* ── HERO ── */
+    /* HERO */
     .hero{min-height:calc(100vh - 106px);display:flex;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;background:linear-gradient(135deg,var(--bg) 0%,var(--card) 50%,var(--navy) 100%);position:relative;overflow:hidden;}
     .hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(226,0,26,.08) 0%,transparent 60%);animation:hpulse 7s ease-in-out infinite;}
     @keyframes hpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
@@ -91,12 +77,12 @@
     .btn-o{background:transparent;color:var(--w);border:2px solid var(--bd);}
     .btn-o:hover{border-color:var(--red);color:var(--red);transform:translateY(-2px);}
 
-    /* ── SCROLL TOP ── */
+    /* SCROLL TOP */
     #stb{position:fixed;bottom:2rem;right:2rem;width:42px;height:42px;background:var(--red);color:#fff;border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;z-index:999;opacity:0;transform:translateY(8px);transition:all .3s;box-shadow:0 4px 14px var(--glow);display:flex;align-items:center;justify-content:center;}
     #stb.show{opacity:1;transform:translateY(0);}
     #stb:hover{background:var(--red-h);transform:translateY(-2px);}
 
-    /* ── SECTIONS ── */
+    /* SECTIONS */
     section{padding:5rem 2rem;}
     .wrap{max-width:1200px;margin:0 auto;}
     .stitle{text-align:center;margin-bottom:3.5rem;}
@@ -105,7 +91,7 @@
     .stitle p{color:var(--muted);font-size:.95rem;}
     .div{width:50px;height:4px;background:var(--red);margin:.65rem auto;border-radius:2px;}
 
-    /* ── ABOUT ── */
+    /* ABOUT */
     #about{background:var(--card);}
     .about-g{display:grid;grid-template-columns:1fr 2fr;gap:3rem;align-items:center;}
     .aph{width:190px;height:190px;border-radius:20px;border:3px solid var(--red);margin:0 auto;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:5rem;overflow:hidden;box-shadow:0 18px 50px var(--glow);}
@@ -121,7 +107,7 @@
     .lang .fl{font-size:1.4rem;display:block;}
     .lang small{font-size:.72rem;color:var(--muted);}
 
-    /* ── PROJECTS ── */
+    /* PROJECTS */
     #projects{background:var(--bg);}
     .fbar{display:flex;justify-content:center;gap:.65rem;flex-wrap:wrap;margin-bottom:2.5rem;}
     .fb{padding:.45rem 1.2rem;border-radius:50px;border:1.5px solid var(--bd);background:transparent;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:all .3s;}
@@ -134,6 +120,7 @@
     .pimg.cao{background:linear-gradient(135deg,#1a1a2e,#16213e);}
     .pimg.sncf{background:linear-gradient(135deg,#1a0a0a,#3d0a0a);}
     .pimg.bornes{background:linear-gradient(135deg,#0a1a0a,#0a3d1a);}
+    .pimg.lean{background:linear-gradient(135deg,#1a0a14,#2d0a1a);}
     .pbadge{position:absolute;top:10px;right:10px;background:rgba(226,0,26,.88);color:#fff;font-size:.67rem;font-weight:700;padding:.18rem .55rem;border-radius:50px;letter-spacing:.5px;text-transform:uppercase;}
     .pb{padding:1.45rem;}
     .ptag{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--red);font-weight:700;margin-bottom:.3rem;}
@@ -142,7 +129,7 @@
     .ptags{display:flex;flex-wrap:wrap;gap:.35rem;}
     .tg{background:rgba(226,0,26,.1);color:var(--red);border:1px solid rgba(226,0,26,.25);padding:.16rem .6rem;border-radius:50px;font-size:.75rem;font-weight:500;}
 
-    /* ── SKILLS ── */
+    /* SKILLS */
     #skills{background:var(--card);}
     .stabs{display:flex;justify-content:center;gap:.55rem;flex-wrap:wrap;margin-bottom:2.5rem;}
     .stab{padding:.45rem 1.1rem;border-radius:8px;border:1.5px solid var(--bd);background:transparent;color:var(--muted);font-size:.83rem;font-weight:600;cursor:pointer;transition:all .3s;}
@@ -154,7 +141,7 @@
     .ski{font-size:1.3rem;flex-shrink:0;}
     .skn{color:var(--tx);font-size:.85rem;font-weight:500;}
 
-    /* ── GAMES ── */
+    /* GAMES */
     #games{background:var(--bg);}
     .ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:1.8rem;}
     .gc{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--bd);transition:all .3s;}
@@ -173,7 +160,7 @@
     .gc2{background:transparent;color:var(--muted);border:1.5px solid var(--bd);}
     .gc2:hover{border-color:var(--red);color:var(--red);}
 
-    /* ── GAME IFRAME MODAL ── */
+    /* GAME IFRAME MODAL */
     #gm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;align-items:center;justify-content:center;flex-direction:column;}
     #gm.on{display:flex;}
     .gmh{width:92%;max-width:920px;display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;color:#fff;}
@@ -181,7 +168,7 @@
     .gmclose{background:var(--red);border:none;color:#fff;padding:.38rem .9rem;border-radius:6px;cursor:pointer;font-weight:600;font-size:.85rem;}
     #gif{width:92%;max-width:920px;height:76vh;border:2px solid var(--red);border-radius:12px;}
 
-    /* ── CV ── */
+    /* CV */
     #cv{background:var(--card);}
     .cvg{display:grid;grid-template-columns:1fr 1fr;gap:3rem;}
     .cvc h3{font-size:1.12rem;color:var(--w);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem;}
@@ -193,13 +180,7 @@
     .cvo{color:var(--muted);font-size:.83rem;margin-bottom:.35rem;}
     .cvi p{color:var(--faint);font-size:.81rem;line-height:1.6;}
 
-    /* ── TESTIMONIALS ── */
-    #testi{background:var(--bg);}
-    .tph{text-align:center;padding:2.5rem;border:2px dashed var(--bd);border-radius:16px;max-width:560px;margin:0 auto;}
-    .tph .ico{font-size:2.8rem;margin-bottom:.9rem;display:block;}
-    .tph p{color:var(--muted);font-size:.93rem;}
-
-    /* ── CONTACT ── */
+    /* CONTACT */
     #contact{background:var(--card);text-align:center;}
     .ccards{display:flex;justify-content:center;gap:1.1rem;flex-wrap:wrap;margin-top:2rem;}
     .cc{background:var(--bg);border-radius:12px;padding:1.2rem 1.6rem;border:1px solid var(--bd);text-decoration:none;transition:all .3s;min-width:175px;}
@@ -208,7 +189,7 @@
     .cc .lbl{color:var(--muted);font-size:.73rem;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:.22rem;}
     .cc .val{color:var(--w);font-size:.88rem;font-weight:600;}
 
-    /* ── MODALS ── */
+    /* MODALS */
     .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;align-items:center;justify-content:center;}
     .mo.on{display:flex;}
     .md{background:var(--card);border-radius:20px;padding:2.2rem;max-width:670px;width:92%;max-height:82vh;overflow-y:auto;border:1px solid rgba(226,0,26,.3);position:relative;}
@@ -221,16 +202,16 @@
     .md ul li{margin-bottom:.3rem;font-size:.91rem;line-height:1.6;}
     .md ul li strong{color:var(--red);}
 
-    /* ── FOOTER ── */
+    /* FOOTER */
     footer{background:var(--bg);padding:1.5rem;text-align:center;border-top:1px solid var(--bd);}
     footer p{color:var(--muted);font-size:.83rem;}
     footer span{color:var(--red);}
 
-    /* ── ANIMATIONS ── */
+    /* ANIMATIONS */
     .fi{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease;}
     .fi.vis{opacity:1;transform:translateY(0);}
 
-    /* ── RESPONSIVE ── */
+    /* RESPONSIVE */
     @media(max-width:900px){.about-g{grid-template-columns:1fr;text-align:center;}.interests,.langs{justify-content:center;}.cvg{grid-template-columns:1fr;}}
     @media(max-width:640px){.nav-links{display:none;}.burger{display:flex;}.hero h1{font-size:2.1rem;}.counters{gap:1.1rem;}}
   </style>
@@ -244,7 +225,6 @@
   <p class="ld-txt">Chargement</p>
 </div>
 
-<!-- SCROLL PROGRESS -->
 <div id="spb"></div>
 
 <!-- NAV -->
@@ -281,17 +261,14 @@
 <section id="home" class="hero">
   <div class="hero-c">
     <div class="hero-tag">✦ Double Master · Apprenti Ingénieur</div>
-    <div class="avatar">
-      <!-- Remplace par <img src="images/profil.jpg" alt="Photo"> quand tu as ta photo -->
-      👤
-    </div>
+    <div class="avatar">👤</div>
     <h1>Mathéo<br><span>PEREIRA</span></h1>
     <p class="hero-role">Ingénieur Mécatronique · Génie Industriel & Production Industrielle</p>
     <p class="typewr"><span id="tw"></span><span class="cur"></span></p>
     <div class="counters">
       <div class="cnt"><span class="cnt-n" data-t="4">0</span><span class="cnt-l">Expériences</span></div>
       <div class="cnt"><span class="cnt-n" data-t="2">0</span><span class="cnt-l">Masters</span></div>
-      <div class="cnt"><span class="cnt-n" data-t="3">0</span><span class="cnt-l">Projets</span></div>
+      <div class="cnt"><span class="cnt-n" data-t="4">0</span><span class="cnt-l">Projets</span></div>
       <div class="cnt"><span class="cnt-n" data-t="1">0</span><span class="cnt-l">Jeux créés</span></div>
     </div>
     <div class="btns">
@@ -306,24 +283,17 @@
   <div class="wrap">
     <div class="stitle fi"><h2>À <span>Propos</span></h2><div class="div"></div><p>Qui je suis et ce qui me passionne</p></div>
     <div class="about-g fi">
-      <div>
-        <div class="aph">
-          <!-- Remplace par <img src="images/profil.jpg" alt="Mathéo"> -->
-          👤
-        </div>
-      </div>
+      <div><div class="aph">👤</div></div>
       <div class="at">
         <h3>Bonjour, je suis <span>Mathéo PEREIRA</span> 👋</h3>
-        <p>Passionné par la mécatronique et l'industrie du futur, je poursuis en parallèle un Double Master en Génie Industriel & Production Industrielle (GIPI) et en Mécatronique (MESI) à l'Université de Strasbourg. Cette double formation me donne une vision complète des systèmes industriels : de la conception CAO à l'automatisation, en passant par le Lean Management.</p>
-        <p>En alternance chez SNCF Voyageurs au technicentre de Bischheim, je travaille au quotidien sur l'optimisation et l'industrialisation des moyens de production. Auparavant, j'ai piloté des projets R&D mécatroniques chez Bornes Access autour de l'accessibilité PMR.</p>
+        <p>Passionné par la mécatronique et l'industrie du futur, je poursuis en parallèle un Double Master en Génie Industriel & Production Industrielle (GIPI) et en Mécatronique (MESI) à l'Université de Strasbourg.</p>
+        <p>En alternance chez SNCF Voyageurs au technicentre de Bischheim, je travaille au quotidien sur l'optimisation et l'industrialisation des moyens de production. J'ai également développé un outil d'analyse vidéo Lean basé sur la vision par ordinateur.</p>
         <p>Mon objectif : concevoir des systèmes intelligents, automatisés et robustes qui répondent aux enjeux de l'industrie 4.0.</p>
         <div class="interests">
-          <span class="itag">🤖 Robotique</span>
-          <span class="itag">🏭 Industrie 4.0</span>
-          <span class="itag">🚗 Automobile</span>
-          <span class="itag">✈️ Aéronautique</span>
-          <span class="itag">🔧 Prototypage</span>
-          <span class="itag">🎮 Dev Web</span>
+          <span class="itag">🤖 Robotique</span><span class="itag">🏭 Industrie 4.0</span>
+          <span class="itag">🚗 Automobile</span><span class="itag">✈️ Aéronautique</span>
+          <span class="itag">🔧 Prototypage</span><span class="itag">🎮 Dev Web</span>
+          <span class="itag">🐍 Python / IA</span>
         </div>
         <div class="langs">
           <div class="lang"><span class="fl">🇫🇷</span><small>Français<br>Natif</small></div>
@@ -347,18 +317,54 @@
       <button class="fb" data-f="mgmt">Managérial</button>
     </div>
     <div class="pgrid">
+
+      <!-- Carte CAO -->
       <div class="pc fi" data-c="be" onclick="om('cao')">
         <div class="pimg cao">⚙️<div class="pbadge">Bureau d'études</div></div>
-        <div class="pb"><div class="ptag">Conception · Modélisation 3D</div><h3>Projets CAO</h3><p>Conception et modélisation 3D de pièces mécaniques et assemblages complexes.</p><div class="ptags"><span class="tg">SolidWorks</span><span class="tg">Inventor</span><span class="tg">Fusion 360</span></div></div>
+        <div class="pb">
+          <div class="ptag">Conception · Modélisation 3D</div>
+          <h3>Projets CAO</h3>
+          <p>Conception et modélisation 3D de pièces mécaniques et assemblages complexes.</p>
+          <div class="ptags"><span class="tg">SolidWorks</span><span class="tg">Inventor</span><span class="tg">Fusion 360</span></div>
+        </div>
       </div>
+
+      <!-- Carte SNCF Bischheim -->
       <div class="pc fi" data-c="lean" onclick="om('sncf')">
         <div class="pimg sncf">🚄<div class="pbadge">Lean & Amélioration</div></div>
-        <div class="pb"><div class="ptag">SNCF Voyageurs · Ferroviaire</div><h3>Projets SNCF — Bischheim</h3><p>Déploiement VISIBILI-TI, chantiers Kaizen/5S et industrialisation.</p><div class="ptags"><span class="tg">VISIBILI-TI</span><span class="tg">Kaizen</span><span class="tg">SAP</span></div></div>
+        <div class="pb">
+          <div class="ptag">SNCF Voyageurs · Ferroviaire</div>
+          <h3>Projets SNCF — Bischheim</h3>
+          <p>Déploiement VISIBILI-TI, chantiers Kaizen/5S et industrialisation.</p>
+          <div class="ptags"><span class="tg">VISIBILI-TI</span><span class="tg">Kaizen</span><span class="tg">SAP</span></div>
+        </div>
       </div>
+
+      <!-- Carte Bornes Access -->
       <div class="pc fi" data-c="rd" onclick="om('bornes')">
         <div class="pimg bornes">♿<div class="pbadge">R&D</div></div>
-        <div class="pb"><div class="ptag">Accessibilité · R&D · Mécatronique</div><h3>Bornes Access</h3><p>Pilotage et développement de produits mécatroniques pour l'accessibilité PMR.</p><div class="ptags"><span class="tg">R&D</span><span class="tg">PMR</span><span class="tg">Mécatronique</span></div></div>
+        <div class="pb">
+          <div class="ptag">Accessibilité · R&D · Mécatronique</div>
+          <h3>Bornes Access</h3>
+          <p>Pilotage et développement de produits mécatroniques pour l'accessibilité PMR.</p>
+          <div class="ptags"><span class="tg">R&D</span><span class="tg">PMR</span><span class="tg">Mécatronique</span></div>
+        </div>
       </div>
+
+      <!-- ✅ NOUVELLE CARTE — Lean Video Analyser -->
+      <div class="pc fi" data-c="lean" onclick="om('lean')">
+        <div class="pimg lean">🎥<div class="pbadge">Lean & IA · Python</div></div>
+        <div class="pb">
+          <div class="ptag">SNCF Voyageurs · Vision par ordinateur</div>
+          <h3>Lean Video Analyser</h3>
+          <p>Détection et tracking de personnes en temps réel. Analyse automatique des 7 Mudas avec graphes temporels et export rapport.</p>
+          <div class="ptags">
+            <span class="tg">Python</span><span class="tg">OpenCV</span>
+            <span class="tg">Tkinter</span><span class="tg">Matplotlib</span><span class="tg">Lean</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -409,10 +415,10 @@
     </div>
     <div id="sp-it" class="spanel">
       <div class="skc"><span class="ski">🐍</span><span class="skn">Python</span></div>
+      <div class="skc"><span class="ski">👁️</span><span class="skn">OpenCV / Vision IA</span></div>
       <div class="skc"><span class="ski">⚙️</span><span class="skn">C++</span></div>
       <div class="skc"><span class="ski">📊</span><span class="skn">SAP / ERP</span></div>
       <div class="skc"><span class="ski">🎮</span><span class="skn">Unity</span></div>
-      <div class="skc"><span class="ski">🎨</span><span class="skn">Blender</span></div>
       <div class="skc"><span class="ski">🌐</span><span class="skn">HTML / CSS / JS</span></div>
     </div>
     <div id="sp-au" class="spanel">
@@ -444,12 +450,12 @@
         </div>
       </div>
       <div class="gc fi" style="opacity:.4;pointer-events:none;">
-        <div class="gprev" style="background:linear-gradient(135deg,#111,#1a1a1a);">🎮</div>
+        <div class="gprev">🎮</div>
         <div class="gb">
           <div class="gtech">À venir</div>
           <h3>Prochain jeu...</h3>
           <p>Un nouveau mini-jeu est en cours de développement. Stay tuned !</p>
-          <div class="gbtns"><button class="gbtn gp" disabled>▶ Bientôt</button></div>
+          <div class="gbtns"><button class="gbtn gp" disabled>Bientôt</button></div>
         </div>
       </div>
     </div>
@@ -459,35 +465,21 @@
 <!-- CV -->
 <section id="cv">
   <div class="wrap">
-    <div class="stitle fi"><h2>Mon <span>Parcours</span></h2><div class="div"></div><p>Formation, expériences et certifications</p></div>
-    <div class="cvg">
+    <div class="stitle fi"><h2>Mon <span>Parcours</span></h2><div class="div"></div><p>Formations et expériences professionnelles</p></div>
+    <div class="cvg fi">
       <div class="cvc">
         <h3>🎓 Formation</h3>
-        <div class="cvi fi"><div class="cvp">2026 – 2028 · En cours</div><h4>Master Mécatronique (MESI)</h4><div class="cvo">Université de Strasbourg</div><p>Automatisation, systèmes embarqués, robotique et optimisation des moyens de production industriels.</p></div>
-        <div class="cvi fi"><div class="cvp">2024 – 2026</div><h4>Master GIPI — Génie Industriel & Production</h4><div class="cvo">Université de Strasbourg</div><p>Lean Management, gestion et optimisation des systèmes de production, amélioration continue.</p></div>
-        <div class="cvi fi"><div class="cvp">2022 – 2024</div><h4>BTS ATI — Licence Mécatronique (IEII)</h4><div class="cvo">UIMM FAI · Université de Strasbourg</div><p>Automatismes, électrotechnique, mécanique, conception et réseaux industriels.</p></div>
+        <div class="cvi"><div class="cvp">2023 — 2026</div><h4>Double Master GIPI + MESI</h4><div class="cvo">Université de Strasbourg</div><p>Génie Industriel & Production Industrielle + Mécatronique des Systèmes Industriels</p></div>
+        <div class="cvi"><div class="cvp">2021 — 2023</div><h4>Bachelor Génie Mécanique</h4><div class="cvo">IUT Robert Schuman</div><p>Conception mécanique, fabrication, automatisation</p></div>
       </div>
       <div class="cvc">
         <h3>💼 Expériences</h3>
-        <div class="cvi fi"><div class="cvp">Juil. 2026 – Août 2028</div><h4>Apprenti Ingénieur Mécatronique</h4><div class="cvo">SNCF Voyageurs — Bischheim</div><p>Co-responsable VISIBILI-TI · Kaizen/5S · Industrialisation kit approvisionnement · Optimisation production automatisée.</p></div>
-        <div class="cvi fi"><div class="cvp">2024 – 2025</div><h4>Apprenti Ingénieur Bureau d'Études R&D</h4><div class="cvo">Bornes Access</div><p>Pilotage nouveaux produits mécatroniques · Suivi projets France/Europe · Optimisation des coûts.</p></div>
-        <div class="cvi fi"><div class="cvp">2024</div><h4>Apprenti Technicien Bureau d'Études R&D</h4><div class="cvo">Bornes Access</div><p>Conception 3D · Automatisation · Prototypage · Tests et validation.</p></div>
-        <div class="cvi fi"><div class="cvp">2024</div><h4>Technicien Réseaux & Distribution</h4><div class="cvo">Sotréca</div><p>Raccordement HT/BT · Installation d'armoires électriques · Interventions terrain.</p></div>
+        <div class="cvi"><div class="cvp">2023 — présent</div><h4>Apprenti Ingénieur</h4><div class="cvo">SNCF Voyageurs · Bischheim</div><p>Lean, industrialisation, VISIBILI-TI, Kaizen, outils IA (Lean Video Analyser)</p></div>
+        <div class="cvi"><div class="cvp">2022 — 2023</div><h4>Ingénieur R&D</h4><div class="cvo">Bornes Access</div><p>Développement produits mécatroniques PMR, pilotage fournisseurs, gestion de projet</p></div>
       </div>
     </div>
-    <div style="text-align:center;margin-top:3rem;">
-      <a href="cv.pdf" class="btn btn-p" download="CV_Matheo_PEREIRA.pdf">📄 Télécharger mon CV (PDF)</a>
-    </div>
-  </div>
-</section>
-
-<!-- TÉMOIGNAGES -->
-<section id="testi">
-  <div class="wrap">
-    <div class="stitle fi"><h2><span>Témoignages</span></h2><div class="div"></div><p>Ce que disent ceux qui m'ont accompagné</p></div>
-    <div class="tph fi">
-      <span class="ico">💬</span>
-      <p>Les témoignages de mes maîtres d'apprentissage et professeurs seront ajoutés prochainement.</p>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="cv.pdf" class="btn btn-p" download="CV_Matheo_PEREIRA.pdf">📄 Télécharger mon CV complet</a>
     </div>
   </div>
 </section>
@@ -495,101 +487,219 @@
 <!-- CONTACT -->
 <section id="contact">
   <div class="wrap">
-    <div class="stitle fi"><h2>Me <span>Contacter</span></h2><div class="div"></div><p>N'hésitez pas à me joindre</p></div>
+    <div class="stitle fi"><h2>Me <span>Contacter</span></h2><div class="div"></div><p>Disponible pour toute opportunité ou collaboration</p></div>
     <div class="ccards">
-      <a href="mailto:matheopereira768@gmail.com" class="cc"><span class="ico">📧</span><span class="lbl">Email</span><span class="val">matheopereira768@gmail.com</span></a>
-      <a href="tel:0766863095" class="cc"><span class="ico">📱</span><span class="lbl">Téléphone</span><span class="val">07 66 86 30 95</span></a>
-      <a href="https://www.linkedin.com/in/math%C3%A9o-pereira-7a62b1243/" target="_blank" rel="noopener" class="cc"><span class="ico">💼</span><span class="lbl">LinkedIn</span><span class="val">Mathéo PEREIRA</span></a>
-      <div class="cc"><span class="ico">📍</span><span class="lbl">Localisation</span><span class="val">Strasbourg, 67200</span></div>
+      <a href="mailto:matheo.pereira@example.com" class="cc"><span class="ico">📧</span><span class="lbl">Email</span><span class="val">matheo.pereira@...</span></a>
+      <a href="https://www.linkedin.com/in/matheo-pereira" target="_blank" class="cc"><span class="ico">💼</span><span class="lbl">LinkedIn</span><span class="val">matheo-pereira</span></a>
+      <a href="https://github.com/matheopereira768-coder" target="_blank" class="cc"><span class="ico">🐙</span><span class="lbl">GitHub</span><span class="val">matheopereira768-coder</span></a>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer><p>© 2026 Mathéo <span>PEREIRA</span> · Ingénieur Mécatronique · Strasbourg 🚄</p></footer>
+<footer>
+  <p>© 2026 <span>Mathéo PEREIRA</span> · Fait avec ❤️ · Portfolio v2</p>
+</footer>
 
 <!-- SCROLL TOP -->
 <button id="stb" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-<!-- MODALS PROJETS -->
-<div class="mo" id="mo-cao"><div class="md"><button class="mdcl" onclick="cm2('cao')">✕</button><h2>Projets CAO</h2><span class="mdtag">⚙️ SolidWorks · Inventor · Fusion 360</span><p>[Décris ici tes projets CAO : contexte, objectifs, outils, résultats...]</p><ul><li><strong>Logiciels :</strong> SolidWorks, Inventor, Fusion 360</li><li><strong>Réalisations :</strong> [tes pièces / assemblages marquants]</li><li><strong>Compétences :</strong> mise en plan, calcul résistance, prototypage</li></ul></div></div>
-<div class="mo" id="mo-sncf"><div class="md"><button class="mdcl" onclick="cm2('sncf')">✕</button><h2>Projets SNCF — Bischheim</h2><span class="mdtag">🚄 Apprenti Ingénieur Mécatronique · 2026–2028</span><p>Optimisation et automatisation des moyens de production au technicentre de Bischheim.</p><ul><li><strong>VISIBILI-TI :</strong> co-responsable du déploiement</li><li><strong>Kaizen / 5S :</strong> animation et suivi de chantiers</li><li><strong>Industrialisation :</strong> kit d'approvisionnement optimisé</li><li><strong>Outils :</strong> SAP, TIA Portal, Lean Management</li></ul></div></div>
-<div class="mo" id="mo-bornes"><div class="md"><button class="mdcl" onclick="cm2('bornes')">✕</button><h2>Bornes Access</h2><span class="mdtag">♿ R&D Mécatronique · 2024–2025 · France / Europe</span><p>Pilotage du développement de produits mécatroniques pour l'accessibilité PMR.</p><ul><li><strong>Rôle :</strong> pilotage de A à Z (conception → industrialisation)</li><li><strong>Périmètre :</strong> projets France et Europe</li><li><strong>CAO :</strong> conception 3D, prototypage, tests et validation</li><li><strong>Gestion :</strong> coûts, planification, fournisseurs</li></ul></div></div>
-
 <!-- GAME MODAL -->
-<div id="gm"><div class="gmh"><h3 id="gmt">Jeu</h3><button class="gmclose" onclick="cg()">✕ Fermer</button></div><iframe id="gif" src="" frameborder="0" allowfullscreen></iframe></div>
+<div id="gm">
+  <div class="gmh"><h3 id="gtitle"></h3><button class="gmclose" onclick="cg()">✕ Fermer</button></div>
+  <iframe id="gif" src="" frameborder="0"></iframe>
+</div>
+
+<!-- ✅ MODAL CAO -->
+<div class="mo" id="mo-cao" onclick="if(event.target===this)cm2('cao')">
+  <div class="md">
+    <button class="mdcl" onclick="cm2('cao')">✕</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;"><span style="font-size:2rem">⚙️</span><h2>Projets CAO</h2></div>
+    <span class="mdtag">Bureau d'études · Conception · Modélisation 3D</span>
+    <p>Conception et modélisation 3D de pièces mécaniques complexes dans le cadre de projets universitaires et professionnels.</p>
+    <ul>
+      <li><strong>SolidWorks</strong> — assemblages, mises en plan, simulations</li>
+      <li><strong>Inventor</strong> — modélisation paramétrique</li>
+      <li><strong>Fusion 360</strong> — prototypage rapide, CFAO</li>
+    </ul>
+    <div style="display:flex;gap:10px;margin-top:1.4rem;"><button onclick="cm2('cao')" class="btn btn-o" style="flex:1;">Fermer</button></div>
+  </div>
+</div>
+
+<!-- ✅ MODAL SNCF -->
+<div class="mo" id="mo-sncf" onclick="if(event.target===this)cm2('sncf')">
+  <div class="md">
+    <button class="mdcl" onclick="cm2('sncf')">✕</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;"><span style="font-size:2rem">🚄</span><h2>Projets SNCF — Bischheim</h2></div>
+    <span class="mdtag">SNCF Voyageurs · Lean · Industrialisation · 2023–2026</span>
+    <p>En alternance au technicentre de Bischheim, j'interviens sur des projets d'optimisation et d'industrialisation des moyens de production ferroviaire.</p>
+    <ul>
+      <li><strong>VISIBILI-TI</strong> — déploiement du système de suivi de production</li>
+      <li><strong>Kaizen / 5S</strong> — animation de chantiers d'amélioration continue</li>
+      <li><strong>Lean Video Analyser</strong> — outil IA de tracking vidéo pour analyses terrain</li>
+      <li><strong>SAP</strong> — gestion des ordres de fabrication et stocks</li>
+    </ul>
+    <div style="display:flex;gap:10px;margin-top:1.4rem;"><button onclick="cm2('sncf')" class="btn btn-o" style="flex:1;">Fermer</button></div>
+  </div>
+</div>
+
+<!-- ✅ MODAL BORNES -->
+<div class="mo" id="mo-bornes" onclick="if(event.target===this)cm2('bornes')">
+  <div class="md">
+    <button class="mdcl" onclick="cm2('bornes')">✕</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;"><span style="font-size:2rem">♿</span><h2>Bornes Access</h2></div>
+    <span class="mdtag">R&D · Mécatronique · Accessibilité PMR · 2022–2023</span>
+    <p>Pilotage du développement de produits mécatroniques innovants pour l'accessibilité des personnes à mobilité réduite.</p>
+    <ul>
+      <li><strong>R&D produit</strong> — conception mécanique et électronique</li>
+      <li><strong>Pilotage fournisseurs</strong> — sourcing, cahier des charges, suivi</li>
+      <li><strong>Tests & validation</strong> — protocoles de qualification produit</li>
+    </ul>
+    <div style="display:flex;gap:10px;margin-top:1.4rem;"><button onclick="cm2('bornes')" class="btn btn-o" style="flex:1;">Fermer</button></div>
+  </div>
+</div>
+
+<!-- ✅ MODAL LEAN VIDEO ANALYSER -->
+<div class="mo" id="mo-lean" onclick="if(event.target===this)cm2('lean')">
+  <div class="md">
+    <button class="mdcl" onclick="cm2('lean')">✕</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;"><span style="font-size:2rem">🎥</span><h2>Lean Video Analyser</h2></div>
+    <span class="mdtag">SNCF Voyageurs · Python · OpenCV · Lean Management · 2026</span>
+    <p>Application Python de <strong style="color:var(--red)">détection et tracking de personnes</strong> en temps réel depuis une vidéo de surveillance. Conçue pour automatiser les analyses Lean terrain.</p>
+    <p><strong style="color:var(--w)">Fonctionnalités clés :</strong></p>
+    <ul>
+      <li><strong>Tracking multi-personnes</strong> — algorithme centroïde + NMS, ID unique par personne</li>
+      <li><strong>Diagramme Spaghetti</strong> — trajectoires sur fond vidéo réel, export PNG</li>
+      <li><strong>Heatmap de densité</strong> — zones chaudes identifiées instantanément</li>
+      <li><strong>7 graphes Mudas</strong> — évolution temporelle en temps réel</li>
+      <li><strong>Export rapport</strong> — PDF complet KPIs + spaghetti + heatmap</li>
+      <li><strong>60 FPS</strong> — détection optimisée, thread UI découplé</li>
+    </ul>
+    <p><strong style="color:var(--w)">Stack :</strong> Python 3.14 · OpenCV (MOG2) · NumPy · Matplotlib · Tkinter · Pillow</p>
+    <div style="display:flex;gap:10px;margin-top:1.4rem;flex-wrap:wrap;">
+      <a href="projects/lean-analyser.html" class="btn btn-p" style="flex:1;text-align:center;padding:.7rem 1rem;">🔍 Voir la page projet</a>
+      <button onclick="cm2('lean')" class="btn btn-o" style="flex:1;">Fermer</button>
+    </div>
+  </div>
+</div>
 
 <script>
   // LOADER
-  window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('hidden'),1800));
-
-  // SCROLL PROGRESS + TOP BTN
-  window.addEventListener('scroll',()=>{
-    const s=document.documentElement,p=(s.scrollTop/(s.scrollHeight-window.innerHeight))*100;
-    document.getElementById('spb').style.width=p+'%';
-    const b=document.getElementById('stb');
-    s.scrollTop>400?b.classList.add('show'):b.classList.remove('show');
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1800);
   });
 
-  // DARK / LIGHT
-  function toggleTheme(){
-    const h=document.documentElement,b=document.getElementById('tbtn');
-    if(h.dataset.theme==='dark'){h.dataset.theme='light';b.textContent='🌙 Dark';}
-    else{h.dataset.theme='dark';b.textContent='☀️ Light';}
+  // SCROLL PROGRESS
+  window.addEventListener('scroll', () => {
+    const s = document.documentElement;
+    const p = (s.scrollTop / (s.scrollHeight - s.clientHeight)) * 100;
+    document.getElementById('spb').style.width = p + '%';
+    document.getElementById('stb').classList.toggle('show', s.scrollTop > 300);
+  });
+
+  // THEME
+  function toggleTheme() {
+    const h = document.documentElement;
+    const dark = h.getAttribute('data-theme') === 'dark';
+    h.setAttribute('data-theme', dark ? 'light' : 'dark');
+    document.getElementById('tbtn').textContent = dark ? '🌙 Dark' : '☀️ Light';
   }
 
   // BURGER
-  function toggleMenu(){document.getElementById('mmenu').classList.toggle('open');document.getElementById('burg').classList.toggle('open');}
-  function cm(){document.getElementById('mmenu').classList.remove('open');document.getElementById('burg').classList.remove('open');}
-
-  // PROJECT FILTERS
-  document.querySelectorAll('.fb').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('.fb').forEach(x=>x.classList.remove('on'));b.classList.add('on');
-    const f=b.dataset.f;
-    document.querySelectorAll('.pc').forEach(c=>f==='all'||c.dataset.c===f?c.classList.remove('hide'):c.classList.add('hide'));
-  }));
-
-  // SKILLS TABS
-  function ss(id,el){
-    document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('on'));
-    document.querySelectorAll('.stab').forEach(t=>t.classList.remove('on'));
-    document.getElementById('sp-'+id).classList.add('on');el.classList.add('on');
+  function toggleMenu() {
+    document.getElementById('mmenu').classList.toggle('open');
+    document.getElementById('burg').classList.toggle('open');
+  }
+  function cm() {
+    document.getElementById('mmenu').classList.remove('open');
+    document.getElementById('burg').classList.remove('open');
   }
 
   // TYPEWRITER
-  const phrases=['Mécatronique & Industrie 4.0','Conception CAO','Lean & Amélioration continue','Automatisation industrielle','Apprenti Ingénieur SNCF'];
-  let pi=0,ci=0,del=false;
-  function tw(){
-    const el=document.getElementById('tw'),cur=phrases[pi];
-    el.textContent=del?cur.slice(0,ci--):cur.slice(0,ci++);
-    if(!del&&ci===cur.length+1){del=true;setTimeout(tw,1900);return;}
-    if(del&&ci===-1){del=false;pi=(pi+1)%phrases.length;setTimeout(tw,400);return;}
-    setTimeout(tw,del?50:82);
-  }tw();
+  const phrases = [
+    'Lean Management & Amélioration continue',
+    'Vision par ordinateur & IA Python',
+    'Conception CAO & Mécatronique',
+    'Industrie 4.0 & Automatisation',
+    'Développement Web & Jeux'
+  ];
+  let pi = 0, ci = 0, del = false;
+  const tw = document.getElementById('tw');
+  function typeLoop() {
+    const cur = phrases[pi];
+    tw.textContent = del ? cur.slice(0, ci--) : cur.slice(0, ci++);
+    if (!del && ci > cur.length)      { del = true; setTimeout(typeLoop, 1400); return; }
+    if (del && ci < 0)                { del = false; pi = (pi + 1) % phrases.length; }
+    setTimeout(typeLoop, del ? 45 : 80);
+  }
+  typeLoop();
 
   // COUNTERS
-  let cdone=false;
-  new IntersectionObserver(e=>{if(e[0].isIntersecting&&!cdone){cdone=true;
-    document.querySelectorAll('.cnt-n').forEach(el=>{
-      const t=+el.dataset.t;let c=0;
-      const iv=setInterval(()=>{c=Math.min(c+1,t);el.textContent=c;if(c>=t)clearInterval(iv);},60);
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, t = +el.dataset.t;
+      let c = 0;
+      const iv = setInterval(() => { el.textContent = ++c; if (c >= t) clearInterval(iv); }, 120);
+      obs.unobserve(el);
     });
-  }}).observe(document.querySelector('.counters'));
+  }, { threshold: .5 });
+  document.querySelectorAll('.cnt-n').forEach(el => obs.observe(el));
 
   // FADE-IN
-  new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');}),{threshold:.08})
-    .observe=(...a)=>{a;};
-  const fo=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');}),{threshold:.08});
-  document.querySelectorAll('.fi').forEach(el=>fo.observe(el));
+  const fobs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: .1 });
+  document.querySelectorAll('.fi').forEach(el => fobs.observe(el));
+
+  // PROJECT FILTERS
+  document.querySelectorAll('.fb').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.fb').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      const f = b.dataset.f;
+      document.querySelectorAll('.pc').forEach(c => {
+        c.classList.toggle('hide', f !== 'all' && c.dataset.c !== f);
+      });
+    });
+  });
+
+  // SKILLS TABS
+  function ss(id, btn) {
+    document.querySelectorAll('.spanel').forEach(p => p.classList.remove('on'));
+    document.querySelectorAll('.stab').forEach(b => b.classList.remove('on'));
+    document.getElementById('sp-' + id).classList.add('on');
+    btn.classList.add('on');
+  }
 
   // MODALS
-  function om(id){document.getElementById('mo-'+id).classList.add('on');document.body.style.overflow='hidden';}
-  function cm2(id){document.getElementById('mo-'+id).classList.remove('on');document.body.style.overflow='';}
-  document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o){o.classList.remove('on');document.body.style.overflow='';}}));
+  function om(id) {
+    const el = document.getElementById('mo-' + id);
+    if (el) el.classList.add('on');
+  }
+  function cm2(id) {
+    const el = document.getElementById('mo-' + id);
+    if (el) el.classList.remove('on');
+  }
 
   // GAME MODAL
-  function og(url,title){document.getElementById('gif').src=url;document.getElementById('gmt').textContent=title;document.getElementById('gm').classList.add('on');document.body.style.overflow='hidden';}
-  function cg(){document.getElementById('gif').src='';document.getElementById('gm').classList.remove('on');document.body.style.overflow='';}
+  function og(src, title) {
+    document.getElementById('gtitle').textContent = title;
+    document.getElementById('gif').src = src;
+    document.getElementById('gm').classList.add('on');
+  }
+  function cg() {
+    document.getElementById('gif').src = '';
+    document.getElementById('gm').classList.remove('on');
+  }
+
+  // ESC to close modals
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.mo.on').forEach(m => m.classList.remove('on'));
+      cg();
+    }
+  });
 </script>
 </body>
 </html>
