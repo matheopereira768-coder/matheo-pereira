@@ -1,0 +1,835 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SNCF Lean Analyser — M.PEREIRA</title>
+  <style>
+    /* ── RESET & BASE ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0f0f1a;
+      --panel:    #1a1a2e;
+      --card:     #16213e;
+      --accent:   #C8102E;
+      --accent2:  #ff2d55;
+      --blue:     #3498db;
+      --green:    #2ecc71;
+      --orange:   #e67e22;
+      --purple:   #9b59b6;
+      --text:     #eaeaea;
+      --subtext:  #8888aa;
+      --border:   #2a2a4a;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAVBAR ─────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 60px;
+      background: rgba(15,15,26,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-size: 1.1rem; font-weight: 700; letter-spacing: 1px; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 28px; font-size: 0.85rem; color: var(--subtext); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-back {
+      background: var(--accent); color: #fff;
+      padding: 7px 18px; border-radius: 6px;
+      font-size: 0.82rem; font-weight: 600;
+      transition: background 0.2s;
+    }
+    .nav-back:hover { background: var(--accent2); }
+
+    /* ── HERO ───────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 100px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Grille animée en fond */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(200,16,46,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,16,46,0.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridMove 20s linear infinite;
+    }
+    @keyframes gridMove {
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(40px); }
+    }
+    /* Halo rouge central */
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(200,16,46,0.15) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(200,16,46,0.12);
+      border: 1px solid rgba(200,16,46,0.3);
+      color: var(--accent2);
+      padding: 6px 16px; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; margin-bottom: 28px;
+      position: relative; z-index: 1;
+    }
+    .hero-badge::before { content: '●'; font-size: 0.5rem; animation: blink 1.5s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    .hero h1 {
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 800; line-height: 1.1;
+      position: relative; z-index: 1;
+      margin-bottom: 12px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: var(--subtext); max-width: 640px;
+      line-height: 1.6; margin-bottom: 40px;
+      position: relative; z-index: 1;
+    }
+    .hero-cta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      justify-content: center;
+      position: relative; z-index: 1;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff; padding: 14px 32px;
+      border-radius: 8px; font-weight: 700; font-size: 0.95rem;
+      border: none; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(200,16,46,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,16,46,0.5); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text); padding: 14px 32px;
+      border-radius: 8px; font-weight: 600; font-size: 0.95rem;
+      border: 1px solid var(--border); cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); background: rgba(200,16,46,0.06); }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px; color: var(--subtext); font-size: 0.72rem;
+      letter-spacing: 2px; text-transform: uppercase;
+      animation: fadeInUp 1s 1s both;
+      z-index: 1;
+    }
+    .scroll-hint::after {
+      content: '';
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--subtext), transparent);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+    /* ── MOCKUP APP ─────────────────────────────────────────────── */
+    .mockup-section {
+      padding: 80px 24px;
+      display: flex; justify-content: center;
+      background: linear-gradient(to bottom, var(--bg), var(--panel));
+    }
+    .mockup-window {
+      width: 100%; max-width: 960px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,16,46,0.1);
+      animation: floatUp 3s ease-in-out infinite;
+    }
+    @keyframes floatUp {
+      0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)}
+    }
+    .mockup-bar {
+      background: #1a1a2e;
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #28c840; }
+    .mockup-title {
+      flex: 1; text-align: center;
+      font-size: 0.78rem; color: var(--subtext); letter-spacing: 1px;
+    }
+    /* Simulation de l'interface */
+    .mockup-body {
+      background: #1E1E2E;
+      display: grid;
+      grid-template-columns: 180px 1fr 200px;
+      min-height: 380px;
+      font-size: 0.7rem;
+    }
+    .mock-left {
+      background: #2A2A3E;
+      padding: 12px 10px;
+      display: flex; flex-direction: column; gap: 6px;
+      border-right: 1px solid var(--border);
+    }
+    .mock-logo { color: var(--accent); font-weight: 800; font-size: 0.8rem; margin-bottom: 8px; }
+    .mock-label { color: #9999BB; font-size: 0.6rem; font-weight: 700; letter-spacing: 1px; margin-top: 8px; }
+    .mock-file {
+      background: #32324A; padding: 5px 8px;
+      border-radius: 4px; color: #ccc; font-size: 0.62rem;
+    }
+    .mock-btn {
+      padding: 6px 8px; border-radius: 4px;
+      text-align: center; font-size: 0.62rem; font-weight: 600;
+    }
+    .mock-btn-red   { background: #C8102E; color: #fff; }
+    .mock-btn-green { background: #2ECC71; color: #111; }
+    .mock-btn-orange{ background: #E67E22; color: #fff; }
+    .mock-btn-dark  { background: #32324A; color: #ccc; border: 1px solid #3A3A5C; }
+    .mock-param { display:flex; justify-content:space-between; color:#9999BB; font-size:0.58rem; padding: 2px 0; }
+    .mock-param span { color: #eaeaea; font-weight:700; }
+    .mock-center {
+      position: relative; overflow: hidden;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* Simulation spaghetti animé */
+    .mock-canvas-bg {
+      position: absolute; inset: 0;
+      background: #111;
+      overflow: hidden;
+    }
+    .spaghetti-line {
+      position: absolute;
+      border-radius: 999px;
+      opacity: 0.7;
+      animation: drawLine 3s ease-in-out infinite;
+    }
+    @keyframes drawLine {
+      0%   { clip-path: inset(0 100% 0 0); }
+      60%  { clip-path: inset(0 0% 0 0); }
+      100% { clip-path: inset(0 0% 0 0); opacity: 0.4; }
+    }
+    .mock-dot-person {
+      position: absolute;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      animation: movePerson 4s ease-in-out infinite;
+    }
+    @keyframes movePerson {
+      0%   { transform: translate(0,0); }
+      25%  { transform: translate(40px, -20px); }
+      50%  { transform: translate(80px, 10px); }
+      75%  { transform: translate(40px, 30px); }
+      100% { transform: translate(0,0); }
+    }
+    .mock-hud {
+      position: absolute; top: 8px; left: 8px;
+      background: rgba(26,26,46,0.85);
+      border: 1px solid var(--border);
+      border-radius: 4px; padding: 4px 8px;
+      font-size: 0.58rem; color: var(--green);
+      font-family: monospace;
+    }
+    .mock-progress {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; background: #1a1a2e;
+    }
+    .mock-progress-bar {
+      height: 100%; width: 72%;
+      background: linear-gradient(to right, var(--accent), var(--accent2));
+      animation: progressAnim 4s ease-in-out infinite;
+    }
+    @keyframes progressAnim { 0%{width:0%} 100%{width:95%} }
+    .mock-right {
+      background: #2A2A3E;
+      padding: 10px 8px;
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .mock-right-title { color: #eaeaea; font-weight: 700; font-size: 0.68rem; margin-bottom: 4px; }
+    .mock-graph {
+      height: 28px;
+      border-radius: 3px;
+      background: #32324A;
+      position: relative; overflow: hidden;
+      margin-bottom: 2px;
+    }
+    .mock-graph-label {
+      position: absolute; left: 4px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.5rem; font-weight: 700;
+      z-index: 1;
+    }
+    .mock-graph-fill {
+      position: absolute; bottom: 0; left: 0;
+      height: 60%; border-radius: 0 2px 2px 0;
+      opacity: 0.7;
+    }
+    .mock-graph-line {
+      position: absolute; bottom: 0; left: 30px; right: 0;
+      height: 100%;
+      background: repeating-linear-gradient(90deg, transparent 0, transparent 3px, rgba(255,255,255,0.05) 3px, rgba(255,255,255,0.05) 4px);
+    }
+
+    /* ── STATS BAND ─────────────────────────────────────────────── */
+    .stats-band {
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 32px;
+      text-align: center;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .stat-item {}
+    .stat-number {
+      font-size: 2.8rem; font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { color: var(--subtext); font-size: 0.8rem; margin-top: 6px; }
+
+    /* ── FEATURES ───────────────────────────────────────────────── */
+    section { padding: 80px 24px; max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      color: var(--accent); font-size: 0.72rem;
+      font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section-title span { color: var(--accent); }
+    .section-desc { color: var(--subtext); max-width: 560px; line-height: 1.7; margin-bottom: 48px; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--c1, var(--accent)), transparent);
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--c1, var(--accent));
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 16px;
+      background: rgba(255,255,255,0.05);
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p  { color: var(--subtext); font-size: 0.85rem; line-height: 1.6; }
+
+    /* ── MUDAS SECTION ──────────────────────────────────────────── */
+    .mudas-section { padding: 80px 24px; background: var(--panel); }
+    .mudas-inner { max-width: 1100px; margin: 0 auto; }
+    .mudas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px; margin-top: 48px;
+    }
+    .muda-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 16px;
+      text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+      cursor: default;
+    }
+    .muda-card:hover { transform: scale(1.04); border-color: var(--mc); }
+    .muda-icon { font-size: 1.8rem; margin-bottom: 10px; }
+    .muda-name {
+      font-size: 0.82rem; font-weight: 700; margin-bottom: 4px;
+      color: var(--mc);
+    }
+    .muda-desc { font-size: 0.7rem; color: var(--subtext); line-height: 1.4; }
+
+    /* ── TECH STACK ─────────────────────────────────────────────── */
+    .tech-section { padding: 80px 24px; }
+    .tech-inner { max-width: 1100px; margin: 0 auto; }
+    .tech-pills {
+      display: flex; flex-wrap: wrap; gap: 12px; margin-top: 40px;
+    }
+    .tech-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-size: 0.82rem; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .tech-pill:hover { border-color: var(--accent); background: rgba(200,16,46,0.06); }
+    .tech-pill .dot-tech { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* ── TIMELINE ───────────────────────────────────────────────── */
+    .timeline { display: flex; flex-direction: column; gap: 0; margin-top: 48px; }
+    .timeline-item {
+      display: flex; gap: 20px;
+      padding-bottom: 32px;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute; left: 19px; top: 40px;
+      width: 2px; bottom: 0;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .timeline-item:last-child::before { display: none; }
+    .timeline-dot {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--card); border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .timeline-content { padding-top: 6px; }
+    .timeline-content h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .timeline-content p  { color: var(--subtext); font-size: 0.82rem; line-height: 1.5; }
+
+    /* ── CTA FINAL ──────────────────────────────────────────────── */
+    .cta-section {
+      padding: 100px 24px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(200,16,46,0.1) 0%, transparent 70%);
+    }
+    .cta-section h2 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 16px; position:relative;z-index:1; }
+    .cta-section h2 span { color: var(--accent); }
+    .cta-section p { color: var(--subtext); max-width: 500px; margin: 0 auto 40px; line-height:1.7; position:relative;z-index:1; }
+    .cta-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; position:relative;z-index:1; }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+      font-size: 0.78rem; color: var(--subtext);
+    }
+    footer strong { color: var(--accent); }
+
+    /* ── ANIMATIONS ENTRÉE ──────────────────────────────────────── */
+    .fade-in {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    @keyframes fadeInUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .hero > * { animation: fadeInUp 0.8s ease both; }
+    .hero-badge   { animation-delay: 0.1s; }
+    .hero h1      { animation-delay: 0.2s; }
+    .hero-sub     { animation-delay: 0.35s; }
+    .hero-cta     { animation-delay: 0.5s; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .mockup-body { grid-template-columns: 1fr; }
+      .mock-left, .mock-right { display: none; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ─────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo">M.<span>PEREIRA</span></div>
+  <div class="nav-links">
+    <a href="#features">Fonctionnalités</a>
+    <a href="#mudas">7 Mudas</a>
+    <a href="#tech">Stack</a>
+    <a href="#story">Genèse</a>
+  </div>
+  <a href="../index.html" class="nav-back">← Portfolio</a>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-badge">SNCF Voyageurs · Lean Management · IA</div>
+  <h1>Lean Video<br/><span>Analyser</span></h1>
+  <p class="hero-sub">
+    Détectez, trackez et analysez les gaspillages en temps réel
+    directement depuis une vidéo de surveillance. L'analyse Lean
+    réinventée par la vision par ordinateur.
+  </p>
+  <div class="hero-cta">
+    <a href="#features" class="btn-primary">Découvrir l'app</a>
+    <a href="#tech"     class="btn-secondary">Stack technique</a>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- ── MOCKUP ──────────────────────────────────────────────────── -->
+<div class="mockup-section">
+  <div class="mockup-window fade-in">
+    <div class="mockup-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <div class="mockup-title">Lean Video Analyser — SNCF</div>
+    </div>
+    <div class="mockup-body">
+      <!-- Left panel simulé -->
+      <div class="mock-left">
+        <div class="mock-logo">SNCF Lean Analyser</div>
+        <div class="mock-label">SOURCE VIDEO</div>
+        <div class="mock-file">terrace1-c0.avi</div>
+        <div class="mock-btn mock-btn-red">Choisir une vidéo</div>
+        <div class="mock-btn mock-btn-dark">Utiliser la caméra</div>
+        <div class="mock-btn mock-btn-dark">Reset vidéo</div>
+        <div class="mock-label">PARAMÈTRES</div>
+        <div class="mock-param">FPS <span>25.0</span></div>
+        <div class="mock-param">Pixel→m <span>0.05</span></div>
+        <div class="mock-param">Seuil imm. <span>5 px</span></div>
+        <div class="mock-param">Aire min. <span>4000 px²</span></div>
+        <div style="margin-top:8px"></div>
+        <div class="mock-btn mock-btn-green">Lancer l'analyse</div>
+        <div class="mock-btn mock-btn-orange">Pause / Reprise</div>
+        <div class="mock-btn" style="background:#E74C3C;color:#fff;padding:6px 8px;border-radius:4px;text-align:center;font-size:.62rem;font-weight:600;">Arrêter</div>
+      </div>
+
+      <!-- Centre : simulation spaghetti animé -->
+      <div class="mock-center">
+        <div class="mock-canvas-bg">
+          <!-- Lignes spaghetti simulées -->
+          <div class="spaghetti-line" style="left:60px;top:80px;width:200px;height:3px;background:#E74C3C;transform:rotate(-15deg);animation-delay:0s;"></div>
+          <div class="spaghetti-line" style="left:80px;top:120px;width:160px;height:2px;background:#9B59B6;transform:rotate(8deg);animation-delay:0.5s;"></div>
+          <div class="spaghetti-line" style="left:40px;top:180px;width:240px;height:3px;background:#2ECC71;transform:rotate(-5deg);animation-delay:1s;"></div>
+          <div class="spaghetti-line" style="left:100px;top:240px;width:180px;height:2px;background:#E67E22;transform:rotate(12deg);animation-delay:1.5s;"></div>
+          <div class="spaghetti-line" style="left:150px;top:60px;width:140px;height:2px;background:#3498DB;transform:rotate(-20deg);animation-delay:0.8s;"></div>
+          <div class="spaghetti-line" style="left:60px;top:300px;width:200px;height:3px;background:#F39C12;transform:rotate(-3deg);animation-delay:1.2s;"></div>
+          <!-- Points personnes animés -->
+          <div class="mock-dot-person" style="background:#E74C3C;left:80px;top:100px;animation-delay:0s;"></div>
+          <div class="mock-dot-person" style="background:#9B59B6;left:120px;top:150px;animation-delay:1s;"></div>
+          <div class="mock-dot-person" style="background:#2ECC71;left:180px;top:200px;animation-delay:2s;"></div>
+          <div class="mock-dot-person" style="background:#3498DB;left:240px;top:80px;animation-delay:0.5s;"></div>
+        </div>
+        <div class="mock-hud">⬤ LIVE &nbsp; 3210 / 5010 frames</div>
+        <div class="mock-progress"><div class="mock-progress-bar"></div></div>
+      </div>
+
+      <!-- Right panel simulé -->
+      <div class="mock-right">
+        <div class="mock-right-title">7 MUDAS</div>
+        <div class="mock-graph" style="--mc:#E74C3C">
+          <span class="mock-graph-label" style="color:#E74C3C">Trans</span>
+          <div class="mock-graph-fill" style="background:#E74C3C;width:75%"></div>
+          <div class="mock-graph-line"></div>
+        </div>
+        <div class="mock-graph">
+          <span class="mock-graph-label" style="color:#9B59B6">Inven</span>
+          <div class="mock-graph-fill" style="background:#9B59B6;width:45%"></div>
+          <div class="mock-graph-line"></div>
+        </div>
+        <div class="mock-graph">
+          <span class="mock-graph-label" style="color:#E67E22">Mouv</span>
+          <div class="mock-graph-fill" style="background:#E67E22;width:60%"></div>
+          <div class="mock-graph-line"></div>
+        </div>
+        <div class="mock-graph">
+          <span class="mock-graph-label" style="color:#3498DB">Atten</span>
+          <div class="mock-graph-fill" style="background:#3498DB;width:20%"></div>
+          <div class="mock-graph-line"></div>
+        </div>
+        <div class="mock-graph">
+          <span class="mock-graph-label" style="color:#1ABC9C">Surpr</span>
+          <div class="mock-graph-fill" style="background:#1ABC9C;width:5%"></div>
+          <div class="mock-graph-line"></div>
+        </div>
+        <div class="mock-graph">
+          <span class="mock-graph-label" style="color:#F39C12">Surtr</span>
+          <div class="mock-graph-fill" style="background:#F39C12;width:8%"></div>
+          <div class="mock-graph-line"></div>
+        </div>
+        <div class="mock-graph">
+          <span class="mock-graph-label" style="color:#E74C3C">Défau</span>
+          <div class="mock-graph-fill" style="background:#E74C3C;width:3%"></div>
+          <div class="mock-graph-line"></div>
+        </div>
+        <div style="margin-top:6px;background:#32324A;border-radius:4px;padding:6px;font-family:monospace;font-size:0.55rem;color:#9999BB;line-height:1.6">
+          Personnes : 8<br/>
+          Dist.moy : 11.1m<br/>
+          Att.moy : 0.0s<br/>
+          #2 24.1m 0.0s<br/>
+          #3  3.2m 0.0s
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── STATS ───────────────────────────────────────────────────── -->
+<div style="background:var(--panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="stats-band">
+    <div class="stat-item fade-in">
+      <div class="stat-number" data-target="7">0</div>
+      <div class="stat-label">Mudas détectés & mesurés</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number" data-target="60">0</div>
+      <div class="stat-label">FPS d'analyse en temps réel</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number" data-target="100">0</div>
+      <div class="stat-label">% Python natif, zéro cloud</div>
+    </div>
+    <div class="stat-item fade-in">
+      <div class="stat-number" data-target="500">0</div>
+      <div class="stat-label">Lignes de code pure passion</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURES ───────────────────────────────────────────────── -->
+<section id="features">
+  <div class="section-tag">Fonctionnalités</div>
+  <h2 class="section-title">Tout ce dont vous avez besoin<br/>pour <span>éliminer les gaspillages</span></h2>
+  <p class="section-desc">Une interface complète pensée pour les praticiens Lean, avec une puissance de traitement vidéo digne d'un outil professionnel.</p>
+
+  <div class="features-grid">
+    <div class="feature-card fade-in" style="--c1:#E74C3C">
+      <div class="feature-icon">🎯</div>
+      <h3>Tracking multi-personnes</h3>
+      <p>Algorithme de tracking par distance centroïde avec NMS — chaque individu conserve son identifiant unique tout au long de la vidéo, sans doublon.</p>
+    </div>
+    <div class="feature-card fade-in" style="--c1:#9B59B6">
+      <div class="feature-icon">🌡️</div>
+      <h3>Heatmap de densité</h3>
+      <p>Visualisez instantanément les zones les plus fréquentées de votre espace. Identifier les goulots d'étranglement n'a jamais été aussi immédiat.</p>
+    </div>
+    <div class="feature-card fade-in" style="--c1:#2ECC71">
+      <div class="feature-icon">🍝</div>
+      <h3>Diagramme Spaghetti</h3>
+      <p>Toutes les trajectoires superposées sur le fond réel de la vidéo. Exportable en PNG pour vos rapports A3 et ateliers Kaizen.</p>
+    </div>
+    <div class="feature-card fade-in" style="--c1:#3498DB">
+      <div class="feature-icon">📊</div>
+      <h3>7 graphes Mudas temps réel</h3>
+      <p>Un graphe d'évolution temporelle par Muda, mis à jour automatiquement pendant l'analyse. Repérez les pics et tendances sans attendre la fin.</p>
+    </div>
+    <div class="feature-card fade-in" style="--c1:#E67E22">
+      <div class="feature-icon">⚡</div>
+      <h3>Analyse haute performance</h3>
+      <p>Détection sur frame réduite à 50%, MOG2 optimisé, rendu UI découplé du thread d'analyse. Jusqu'à 60 FPS de traitement vidéo.</p>
+    </div>
+    <div class="feature-card fade-in" style="--c1:#F39C12">
+      <div class="feature-icon">📄</div>
+      <h3>Export rapport automatique</h3>
+      <p>Génération d'un rapport PDF complet avec KPIs, diagramme spaghetti et heatmap — en un clic, prêt à partager.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 7 MUDAS ─────────────────────────────────────────────────── -->
+<div class="mudas-section" id="mudas">
+  <div class="mudas-inner">
+    <div class="section-tag">Méthodologie Lean</div>
+    <h2 class="section-title">Les <span>7 Mudas</span> mesurés</h2>
+    <p class="section-desc">L'application couvre l'intégralité du référentiel Lean sur les gaspillages, chacun tracé et quantifié automatiquement.</p>
+    <div class="mudas-grid">
+      <div class="muda-card fade-in" style="--mc:#E74C3C">
+        <div class="muda-icon">🚶</div>
+        <div class="muda-name">Transport</div>
+        <div class="muda-desc">Déplacements inutiles de personnes ou matériaux</div>
+      </div>
+      <div class="muda-card fade-in" style="--mc:#9B59B6">
+        <div class="muda-icon">📦</div>
+        <div class="muda-name">Inventaire</div>
+        <div class="muda-desc">Stocks excessifs, en-cours de production</div>
+      </div>
+      <div class="muda-card fade-in" style="--mc:#E67E22">
+        <div class="muda-icon">🤸</div>
+        <div class="muda-name">Mouvements</div>
+        <div class="muda-desc">Gestes inutiles, postures inadaptées</div>
+      </div>
+      <div class="muda-card fade-in" style="--mc:#3498DB">
+        <div class="muda-icon">⏳</div>
+        <div class="muda-name">Attentes</div>
+        <div class="muda-desc">Temps d'arrêt, files d'attente</div>
+      </div>
+      <div class="muda-card fade-in" style="--mc:#1ABC9C">
+        <div class="muda-icon">🏭</div>
+        <div class="muda-name">Surproduction</div>
+        <div class="muda-desc">Produire plus ou avant que nécessaire</div>
+      </div>
+      <div class="muda-card fade-in" style="--mc:#F39C12">
+        <div class="muda-icon">⚙️</div>
+        <div class="muda-name">Surtraitement</div>
+        <div class="muda-desc">Étapes sans valeur ajoutée pour le client</div>
+      </div>
+      <div class="muda-card fade-in" style="--mc:#E74C3C">
+        <div class="muda-icon">🔧</div>
+        <div class="muda-name">Défauts</div>
+        <div class="muda-desc">Erreurs, retouches, rebuts et corrections</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TECH STACK ──────────────────────────────────────────────── -->
+<div class="tech-section" id="tech">
+  <div class="tech-inner">
+    <div class="section-tag">Stack Technique</div>
+    <h2 class="section-title">Construit avec les <span>bons outils</span></h2>
+    <p class="section-desc">100% Python, aucune dépendance cloud. Tout tourne en local, sur votre machine, avec vos vidéos.</p>
+    <div class="tech-pills">
+      <div class="tech-pill"><div class="dot-tech" style="background:#3776AB"></div> Python 3.14</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#5C8DBC"></div> OpenCV — Computer Vision</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#F7931E"></div> NumPy — Calcul vectoriel</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#11557C"></div> Matplotlib — Graphes Mudas</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#3A7EBF"></div> Tkinter — Interface native</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#FFD43B"></div> Pillow — Traitement image</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#2ECC71"></div> MOG2 Background Subtraction</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#E74C3C"></div> NMS — Non-Max Suppression</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#9B59B6"></div> Centroid Tracking</div>
+      <div class="tech-pill"><div class="dot-tech" style="background:#E67E22"></div> Threading — UI non-bloquante</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GENESE ──────────────────────────────────────────────────── -->
+<section id="story" style="max-width:800px;">
+  <div class="section-tag">Genèse du projet</div>
+  <h2 class="section-title">Comment est né <span>ce projet ?</span></h2>
+  <p class="section-desc">Retour sur les étapes clés du développement.</p>
+  <div class="timeline">
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot">💡</div>
+      <div class="timeline-content">
+        <h4>L'idée</h4>
+        <p>Chez SNCF Voyageurs, les analyses Lean nécessitaient des heures d'observation manuelle. L'idée : automatiser le comptage et le tracking des flux humains depuis une vidéo existante.</p>
+      </div>
+    </div>
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot">🎥</div>
+      <div class="timeline-content">
+        <h4>Vision par ordinateur</h4>
+        <p>Implémentation du background subtraction MOG2 avec kernel morphologique pour isoler les personnes en mouvement, couplé à un NMS maison pour éviter les doublons de détection.</p>
+      </div>
+    </div>
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot">🧭</div>
+      <div class="timeline-content">
+        <h4>Tracking robuste</h4>
+        <p>Développement d'un algorithme de tracking par distance centroïde avec assignation greedy — chaque personne conserve son ID unique tout au long de la vidéo.</p>
+      </div>
+    </div>
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot">📊</div>
+      <div class="timeline-content">
+        <h4>Interface & KPIs Lean</h4>
+        <p>Construction d'une interface Tkinter professionnelle avec les 7 graphes Mudas en temps réel, heatmap, diagramme spaghetti et export rapport — tout en un.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA FINAL ───────────────────────────────────────────────── -->
+<div class="cta-section">
+  <h2>Prêt à éliminer<br/><span>vos gaspillages ?</span></h2>
+  <p>Un outil Lean puissant, conçu au cœur de SNCF Voyageurs, par un ingénieur passionné d'IA et d'amélioration continue.</p>
+  <div class="cta-btns">
+    <a href="#" class="btn-primary">⬇ Télécharger l'app</a>
+    <a href="../index.html" class="btn-secondary">← Retour au portfolio</a>
+  </div>
+</div>
+
+<!-- ── FOOTER ──────────────────────────────────────────────────── -->
+<footer>
+  <div>Fait avec ❤️ par <strong>PEREIRA Matheo</strong> — SNCF Voyageurs</div>
+  <div>Lean Video Analyser · Python · OpenCV · 2026</div>
+</footer>
+
+<!-- ── SCRIPTS ─────────────────────────────────────────────────── -->
+<script>
+  // Intersection Observer → animations fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Compteurs animés
+  function animateCounter(el) {
+    const target = +el.dataset.target;
+    const suffix = el.dataset.target >= 100 ? (el.dataset.target == 100 ? '%' : '+') : '';
+    let count = 0;
+    const step = Math.ceil(target / 60);
+    const timer = setInterval(() => {
+      count = Math.min(count + step, target);
+      el.textContent = count + suffix;
+      if (count >= target) clearInterval(timer);
+    }, 20);
+  }
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCounter(e.target);
+        counterObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-number[data-target]').forEach(el => counterObserver.observe(el));
+</script>
+
+</body>
+</html>
+```
